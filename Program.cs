@@ -48,7 +48,6 @@ namespace CSharpLearning
                 handler(this, EventArgs.Empty);
             }
         }
-
     }
 
     internal class Sport: Car
@@ -57,7 +56,6 @@ namespace CSharpLearning
         {
             Console.WriteLine("Sport");
         }
-
     }
 
     internal class City: Car
@@ -73,16 +71,17 @@ namespace CSharpLearning
         internal void GenerateLicense(object sender, EventArgs args)
         {
             Random rnd = new Random();
-            Console.WriteLine(sender.GetType());
 
-            string carType = "Sport";
+            string carType = sender.GetType().ToString();
 
-            if(sender.GetType() == typeof(City))
+            string licenseNumber = "";
+
+            for(int i = 0; i < 5; i++)
             {
-                carType = "City";
+                licenseNumber += rnd.Next(0, 9).ToString();
             }
 
-            Console.WriteLine("{1} Car has been bought, this is the license number: {0}", rnd.Next(1, 13), carType);
+            Console.WriteLine("{1} Car has been bought, this is the license number: {0}", licenseNumber, carType);
         } 
     }
 }
