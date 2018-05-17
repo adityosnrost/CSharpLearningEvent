@@ -19,7 +19,7 @@ namespace CSharpLearning
             //sport.Name();
             //city.Name();
 
-            Console.ReadLine();
+            //Console.ReadLine();
 
             LicenseService ls = new LicenseService();
 
