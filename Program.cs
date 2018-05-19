@@ -42,16 +42,14 @@ namespace CSharpLearning
 
         internal virtual void OnBuy()
         {
-            EventHandler handler = Buy;
-            if (null != handler)
-            {
-                handler(this, EventArgs.Empty);
-            }
+            Buy?.Invoke(this, EventArgs.Empty);
         }
     }
 
     internal class Sport: Car
     {
+        internal string name = "Sport";
+
         internal override void Name()
         {
             Console.WriteLine("Sport");
@@ -60,6 +58,8 @@ namespace CSharpLearning
 
     internal class City: Car
     {
+        internal string name = "City";
+
         internal override void Name()
         {
             Console.WriteLine("City");
