@@ -11,77 +11,143 @@ namespace CSharpLearning
     {
         static void Main(string[] args)
         {
-            //Instantiate an object car with Car Type
-            Car car = new Car();
-
-            //Instantiate an object sport with Sport Type
-            Sport sport = new Sport();
-
-            //Instantiate an object city with City Type
-            City city = new City();
-
             //Instantiate an object ls with LicenseService Type
             LicenseService ls = new LicenseService();
 
-            city.Buy += ls.GenerateLicense;
+            //Instantiate an object sport with Sport Type
+            Sport sport = new Sport(ls);
+
+            //Instantiate an object city with City Type
+            City city = new City(ls);
 
             city.OnBuy();
+
+            //Console.ReadLine();
+
+            sport.OnBuy();
 
             Console.ReadLine();
         }
     }
 
+    internal delegate void CarBuyHandler(Car car);
+
     internal class Car
     {
-        internal virtual void Name()
+        internal string CarName;
+
+        internal virtual void SetName()
         {
-            Console.WriteLine("Car");
+            this.CarName = "Car";
         }
 
-        internal event EventHandler Buy;
+        private event CarBuyHandler Buy;
+
+        internal event CarBuyHandler BuyAccessor
+        {
+            add
+            {
+                lock (this)
+                {
+                    Buy += value;
+                }
+            }
+            remove
+            {
+                lock (this)
+                {
+                    Buy -= value;
+                }
+            }
+        }
 
         internal virtual void OnBuy()
         {
-            Buy?.Invoke(this, EventArgs.Empty);
+            Buy?.Invoke(this);
         }
     }
 
-    internal class Sport: Car
+    internal class Sport : Car
     {
-        internal string name = "Sport";
-
-        internal override void Name()
+        LicenseService m_ls;
+        internal Sport(LicenseService ls)
         {
-            Console.WriteLine("Sport");
+            this.m_ls = ls;
+            this.BuyAccessor += ls.GenerateLicense;
+            SetName();
         }
+
+        internal override void SetName()
+        {
+            this.CarName = "Sport";
+        }
+
     }
 
-    internal class City: Car
+    internal class City : Car
     {
-        internal string name = "City";
-
-        internal override void Name()
+        LicenseService m_ls;
+        internal City(LicenseService ls)
         {
-            Console.WriteLine("City");
+            this.m_ls = ls;
+            this.BuyAccessor += ls.GenerateLicense;
+            SetName();
         }
+
+        internal override void SetName()
+        {
+            this.CarName = "City";
+        }
+
     }
 
     internal class LicenseService
     {
+        private static readonly Random random = new Random();
+        private static readonly object syncLock = new object();
+
         internal void GenerateLicense(object sender, EventArgs args)
         {
-            Random rnd = new Random();
+            //Getting Sender Type
+            string vehicleType = sender.GetType().ToString();
 
-            string carType = sender.GetType().ToString();
-
+            //Generate Random License
             string licenseNumber = "";
-
-            for(int i = 0; i < 5; i++)
+            for (int i = 0; i < 5; i++)
             {
-                licenseNumber += rnd.Next(0, 9).ToString();
+                lock (syncLock)
+                { // synchronize
+                    licenseNumber += random.Next(0, 9);
+                }
+
+                //licenseNumber += rnd.Next(0, 9).ToString();
             }
 
+            //Print output of Random License with type car
+            Console.WriteLine("{1} Car has been bought, this is the license number: {0}", licenseNumber, vehicleType);
+        }
+
+        internal void GenerateLicense(Car sender)
+        {
+            //Getting Sender Type
+            string carType = sender.GetType().ToString();
+
+            //Generate Random License
+            string licenseNumber = "";
+            for (int i = 0; i < 5; i++)
+            {
+                lock (syncLock)
+                { // synchronize
+                    licenseNumber += random.Next(0, 9);
+                }
+
+                //licenseNumber += rnd.Next(0, 9).ToString();
+            }
+
+            //Print output of Random License with type car
             Console.WriteLine("{1} Car has been bought, this is the license number: {0}", licenseNumber, carType);
-        } 
+        }
     }
+
+
 }
