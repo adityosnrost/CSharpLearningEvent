@@ -11,16 +11,16 @@ namespace CSharpLearning
     {
         static void Main(string[] args)
         {
+            //Instantiate an object car with Car Type
             Car car = new Car();
+
+            //Instantiate an object sport with Sport Type
             Sport sport = new Sport();
+
+            //Instantiate an object city with City Type
             City city = new City();
 
-            //car.Name();
-            //sport.Name();
-            //city.Name();
-
-            //Console.ReadLine();
-
+            //Instantiate an object ls with LicenseService Type
             LicenseService ls = new LicenseService();
 
             city.Buy += ls.GenerateLicense;
